@@ -17,9 +17,9 @@ public class Main {
 
         try {
             Scanner scanner = new Scanner(System.in);
-            Order order = new Order();
             fileWriter = new FileWriter("orderInfo.txt", true);
             while (next) {
+                Order order = new Order();
                 System.out.print("Введите наименование продукта: ");
                 order.setName(scanner.nextLine());
 

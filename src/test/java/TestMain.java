@@ -1,7 +1,7 @@
 import by.naumenka.lesson34.Order;
 
-import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
