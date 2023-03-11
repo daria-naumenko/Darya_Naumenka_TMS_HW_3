@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
+import java.util.Scanner;
 
 public class Main {
     private static final Logger logger = LogManager.getLogger(Main.class);
@@ -13,7 +14,7 @@ public class Main {
         Connection connection = driverManager.getConnection();
         Statement statement = null;
         ResultSet resultSet = null;
-        Statement preparedStatement = null;
+        PreparedStatement preparedStatement = null;
         ResultSet preparedResultSet = null;
         try {
             statement = connection.createStatement();
@@ -37,9 +38,39 @@ public class Main {
             }
         }
 
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Введите имя студента: ");
+        String name = scanner.nextLine();
+        System.out.print("Введите фамилию студента: ");
+        String lastName = scanner.nextLine();
+        System.out.print("Введите возраст студента: ");
+        int age = scanner.nextInt();
+
         try {
-            preparedStatement = connection.createStatement();
-            preparedResultSet = preparedStatement.executeQuery("select * from cities");
+            String insertQuery = "INSERT INTO student (name, lastname, age) VALUES (?, ?, ?)";
+            preparedStatement = connection.prepareStatement(insertQuery);
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, lastName);
+            preparedStatement.setInt(3, age);
+            int addStudent = preparedStatement.executeUpdate();
+            logger.info(addStudent + "Новый студент добавлен успешно!");
+        } catch (Exception e) {
+            logger.error("Ошибка добавления нового студента в бд: " + e.getMessage());
+        } finally {
+            if (preparedResultSet != null) {
+                preparedResultSet.close();
+            }
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
+            scanner.close();
+        }
+
+        try {
+            preparedResultSet = statement.executeQuery("select * from cities");
 
             while (preparedResultSet.next()) {
                 System.out.print(preparedResultSet.getInt("id_cities") + "\t");
@@ -52,8 +83,8 @@ public class Main {
             if (preparedResultSet != null) {
                 preparedResultSet.close();
             }
-            if (preparedStatement != null) {
-                preparedStatement.close();
+            if (statement != null) {
+                statement.close();
             }
             if (connection != null) {
                 connection.close();
